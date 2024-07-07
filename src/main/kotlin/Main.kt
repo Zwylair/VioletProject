@@ -13,8 +13,8 @@ fun main(vararg args: String) {
         )
 
         dispatch {
-            message(Filter.Group) {notes.addNote(bot, message, conn) }
-            message(Filter.Group) {notes.removeNote(bot, message, conn) }
+            message(Filter.Group) { notes.addNote(bot, message, conn) }
+            message(Filter.Group) { notes.removeNote(bot, message, conn) }
             message(Filter.Group and Filter.Text) { notes.noteTextHandler(bot, message, conn) }
         }
     }

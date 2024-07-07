@@ -1,33 +1,26 @@
-package org.zwylair.violetproject
+import com.github.kotlintelegrambot.bot
+import com.github.kotlintelegrambot.dispatch
+import com.github.kotlintelegrambot.dispatcher.message
+import com.github.kotlintelegrambot.extensions.filters.Filter
 
-import dev.inmo.micro_utils.coroutines.subscribeSafelyWithoutExceptions
-import dev.inmo.tgbotapi.extensions.api.bot.getMe
-import dev.inmo.tgbotapi.extensions.api.send.*
-import dev.inmo.tgbotapi.extensions.behaviour_builder.telegramBotWithBehaviourAndLongPolling
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
-import dev.inmo.tgbotapi.extensions.utils.usernameChatOrNull
-import dev.inmo.tgbotapi.types.message.MarkdownV2
-import kotlinx.coroutines.*
-import kotlin.reflect.typeOf
+fun main(vararg args: String) {
+    val bot = bot {
+        token = args.first()
+        val conn = connect(Config.DB_PATH)
 
-suspend fun main(vararg args: String) {
-    val botToken = args.first()
+        conn.createStatement().executeUpdate(
+            "CREATE TABLE IF NOT EXISTS notes (noteName TEXT, noteText TEXT, chatId INT, mediaFileId TEXT, mediaType TEXT)"
+        )
 
-    telegramBotWithBehaviourAndLongPolling(botToken, CoroutineScope(Dispatchers.IO)) {
-        val me = getMe()
-
-        onCommand("start") { message ->
-            val chat = message.chat
-            sendMessage(chat, "blabla")
-
-//            reply(
-//                message,
-//                "Hi",
-//                MarkdownV2
-//            )
+        dispatch {
+            message(Filter.Group) {notes.addNote(bot, message, conn) }
+            message(Filter.Group) {notes.removeNote(bot, message, conn) }
+            message(Filter.Group and Filter.Text) { notes.noteTextHandler(bot, message, conn) }
         }
+    }
 
-//        allUpdatesFlow.subscribeSafelyWithoutExceptions(this) { println(it) }
-        println("${me.username} [${me.id.chatId}] started")
-    }.second.join()
+    val me = bot.getMe().get()
+
+    println("@${me.username} [${me.id}] started")
+    bot.startPolling()
 }

@@ -8,15 +8,23 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") }
-    maven { url = uri("https://jitpack.io") }
+    maven {
+        setUrl("https://jitpack.io")
+    }
 }
 
 dependencies {
-    implementation("dev.inmo:tgbotapi:15.0.0")
-    implementation("org.slf4j:slf4j-simple:2.0.7")
+    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
+    implementation("org.xerial:sqlite-jdbc:3.46.0.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.slf4j:slf4j-api:2.0.13")
+    implementation("ch.qos.logback:logback-classic:1.5.6")
 }
 
 application {
-    mainClass.set("org.zwylair.violetproject.MainKt")
+    mainClass.set("MainKt")
+}
+
+kotlin {
+    jvmToolchain(17)
 }

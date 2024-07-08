@@ -5,8 +5,9 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import java.sql.Connection
 import Config.LOGGER
+import com.github.kotlintelegrambot.entities.Update
 
-fun removeNote(bot: Bot, message: Message, conn: Connection) {
+fun removeNote(bot: Bot, message: Message, conn: Connection, update: Update) {
     val chatId = ChatId.fromId(message.chat.id)
 
     try {
@@ -16,6 +17,7 @@ fun removeNote(bot: Bot, message: Message, conn: Connection) {
 
         val textContent = message.text ?: message.caption ?: return
         if (!textContent.startsWith("${Config.BOT_PREFIX}removenote")) return
+        update.consume()
 
         val messageParts = textContent.split(" ")
         val noteName: String

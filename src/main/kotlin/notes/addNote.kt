@@ -5,9 +5,10 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import java.sql.Connection
 import Config.LOGGER
+import com.github.kotlintelegrambot.entities.Update
 import isResponseEmpty
 
-fun addNote(bot: Bot, message: Message, conn: Connection) {
+fun addNote(bot: Bot, message: Message, conn: Connection, update: Update) {
     val chatId = ChatId.fromId(message.chat.id)
 
     try {
@@ -17,6 +18,7 @@ fun addNote(bot: Bot, message: Message, conn: Connection) {
 
         val textContent = message.text ?: message.caption ?: return
         if (!textContent.startsWith("${Config.BOT_PREFIX}addnote")) return
+        update.consume()
 
         val messageParts = textContent.split(" ")
         val noteText = messageParts.subList(2, messageParts.size).joinToString(" ")

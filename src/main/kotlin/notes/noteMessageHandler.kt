@@ -7,12 +7,13 @@ import java.sql.Connection
 import Config.LOGGER
 import isResponseEmpty
 
-fun noteTextHandler(bot: Bot, message: Message, conn: Connection) {
+fun noteTextHandler(bot: Bot, message: Message, conn: Connection, update: Update) {
     val chatId = ChatId.fromId(message.chat.id)
 
     try {
         val textContent = message.text!!
         if (!textContent.startsWith("#")) { return }
+        update.consume()
 
         var replyToMessageId = message.messageId
         var deleteParentMessage = false

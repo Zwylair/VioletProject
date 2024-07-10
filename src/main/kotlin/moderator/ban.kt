@@ -9,6 +9,7 @@ import com.github.kotlintelegrambot.entities.ParseMode
 import parseUnixToReadable
 
 fun banUser(bot: Bot, message: Message, restrictTime: Long?, reason: String?, silent: Boolean = false) {
+    val notEnoughRestrictTime = if ((restrictTime?: 0) < 30) { 30 - (restrictTime?: 0) } else { restrictTime!! }
     val chatId = ChatId.fromId(message.chat.id)
     val member = message.from!!
     val notifyText = listOf(
@@ -26,7 +27,7 @@ fun banUser(bot: Bot, message: Message, restrictTime: Long?, reason: String?, si
     bot.banChatMember(
         chatId,
         member.id,
-        untilDate = restrictTime?.let { System.currentTimeMillis() / 1000L + restrictTime + 30 }
+        untilDate = restrictTime?.let { System.currentTimeMillis() / 1000L + restrictTime + notEnoughRestrictTime }
     )
     if (!silent) { bot.sendMessage(chatId, text = notifyText, parseMode = ParseMode.HTML) }
 }

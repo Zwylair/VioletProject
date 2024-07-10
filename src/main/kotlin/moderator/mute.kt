@@ -10,6 +10,7 @@ import com.github.kotlintelegrambot.entities.ParseMode
 import parseUnixToReadable
 
 fun muteUser(bot: Bot, message: Message, restrictTime: Long?, reason: String?, silent: Boolean = false) {
+    val notEnoughRestrictTime = if ((restrictTime?: 0) < 30) { 30 - (restrictTime?: 0) } else { restrictTime!! }
     val newPermissions = ChatPermissions(
         canSendMessages = false,
         canSendMediaMessages = false,
@@ -34,7 +35,7 @@ fun muteUser(bot: Bot, message: Message, restrictTime: Long?, reason: String?, s
         chatId,
         member.id,
         chatPermissions = newPermissions,
-        untilDate = restrictTime?.let { System.currentTimeMillis() / 1000L + restrictTime + 30 }
+        untilDate = restrictTime?.let { System.currentTimeMillis() / 1000L + restrictTime + notEnoughRestrictTime }
     )
     if (!silent) { bot.sendMessage(chatId, text = notifyText, parseMode = ParseMode.HTML) }
 }

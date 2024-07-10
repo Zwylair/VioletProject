@@ -5,7 +5,7 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.ParseMode
 
-fun kickUser(bot: Bot, message: Message, reason: String?) {
+fun kickUser(bot: Bot, message: Message, reason: String?, silent: Boolean = false) {
     val chatId = ChatId.fromId(message.chat.id)
     val meAsChatMember = bot.getChatMember(chatId, bot.getMe().get().id).get()
     val member = message.from!!
@@ -25,5 +25,5 @@ fun kickUser(bot: Bot, message: Message, reason: String?) {
     }
 
     bot.unbanChatMember(chatId, member.id)
-    bot.sendMessage(chatId, text = notifyText, parseMode = ParseMode.HTML)
+    if (!silent) { bot.sendMessage(chatId, text = notifyText, parseMode = ParseMode.HTML) }
 }

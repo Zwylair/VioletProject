@@ -43,7 +43,7 @@ fun banStickerPack(bot: Bot, message: Message, conn: Connection, update: Update)
         return
     }
 
-    val possibleActions = listOf("ban", "kick", "delete", "mute")
+    val possibleActions = listOf("delete", "ban", "kick", "mute", "sban", "skick", "smute")
     val doAction = textContent.split("do=")
     var action: String? = null
     var parsedTime: Long? = null

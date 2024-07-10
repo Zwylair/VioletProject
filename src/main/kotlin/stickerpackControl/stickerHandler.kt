@@ -43,6 +43,9 @@ fun stickerHandler(bot: Bot, message: Message, conn: Connection, update: Update)
         "mute" -> muteUser(bot, message, restrictTime, reason)
         "kick" -> kickUser(bot, message, reason)
         "delete" -> {}
+        "sban" -> banUser(bot, message, restrictTime, reason, silent = true)
+        "smute" -> muteUser(bot, message, restrictTime, reason, silent = true)
+        "skick" -> kickUser(bot, message, reason, silent = true)
     }
 
     bot.deleteMessage(chatId, message.messageId)

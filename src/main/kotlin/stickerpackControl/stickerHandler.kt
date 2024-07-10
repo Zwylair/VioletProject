@@ -1,14 +1,13 @@
 package stickerpackControl
 
+import Action
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.Update
 import java.sql.Connection
 import isResponseEmpty
-import moderator.banUser
-import moderator.kickUser
-import moderator.muteUser
+import moderator.autoRestrictAction
 
 fun stickerHandler(bot: Bot, message: Message, conn: Connection, update: Update) {
     message.sticker!!.setName ?: return
@@ -34,20 +33,12 @@ fun stickerHandler(bot: Bot, message: Message, conn: Connection, update: Update)
     val resSet = statement.executeQuery()
 
     if (isResponseEmpty(resSet)) { return }
-    val action = resSet.getString("action")
-    val restrictTime = resSet.getLong("restrictTime")
-    val reason = resSet.getString("reason")
+    val parsedAction = Action(
+        action = resSet.getString("action"),
+        restrictTime = resSet.getLong("restrictTime"),
+        reason = resSet.getString("reason")
+    )
 
-    when (action) {
-        "ban" -> banUser(bot, message, restrictTime, reason)
-        "mute" -> muteUser(bot, message, restrictTime, reason)
-        "kick" -> kickUser(bot, message, reason)
-        "delete" -> {}
-        "sban" -> banUser(bot, message, restrictTime, reason, silent = true)
-        "smute" -> muteUser(bot, message, restrictTime, reason, silent = true)
-        "skick" -> kickUser(bot, message, reason, silent = true)
-    }
-
-    bot.deleteMessage(chatId, message.messageId)
+    autoRestrictAction(bot, message, parsedAction)
     update.consume()
 }

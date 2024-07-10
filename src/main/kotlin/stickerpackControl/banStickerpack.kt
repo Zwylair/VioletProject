@@ -6,7 +6,7 @@ import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.Update
 import java.sql.Connection
 import isResponseEmpty
-import customDurationToUnix
+import parseDoAction
 
 fun banStickerPack(bot: Bot, message: Message, conn: Connection, update: Update) {
     val textContent = message.text ?: return
@@ -43,56 +43,15 @@ fun banStickerPack(bot: Bot, message: Message, conn: Connection, update: Update)
         return
     }
 
-    val possibleActions = listOf("delete", "ban", "kick", "mute", "sban", "skick", "smute")
-    val doAction = textContent.split("do=")
-    var action: String? = null
-    var parsedTime: Long? = null
-    var reason: String? = null
-
-    when {
-        doAction.size > 2 -> {
-            bot.sendMessage(
-                chatId,
-                text = "\"do=\" sentence is invalid! (There are some \"do=\" sentences)",
-                replyToMessageId = message.messageId
-            )
-            return
-        }
-        doAction.size == 2 -> {
-            try {
-                val doThing = doAction[1].split(" ")
-                action = doThing[0]
-                parsedTime = customDurationToUnix(doThing.getOrNull(1))
-                reason = doThing.getOrNull(2)
-
-                if (!possibleActions.contains(action)) {
-                    bot.sendMessage(
-                        chatId,
-                        text = "\"do=\" sentence is invalid! There is no \"$action\" action (${possibleActions.joinToString(", ")})",
-                        replyToMessageId = message.messageId
-                    )
-                    return
-                }
-            } catch (e: IndexOutOfBoundsException) {
-                bot.sendMessage(
-                    chatId,
-                    text = "\"do=\" sentence needs to contain at least 1 argument! (action, [time], [reason])",
-                    replyToMessageId = message.messageId
-                )
-                return
-            }
-        }
-        doAction.size == 1 -> {
-            action = "delete"
-        }
-    }
+    val parsedAction = parseDoAction(textContent, bot, message)
+    if (parsedAction.isEmpty()) { return }
 
     val seq = conn.prepareStatement("INSERT INTO stickerPackBanList VALUES (?, ?, ?, ?, ?)")
     seq.setObject(1, packName)
     seq.setObject(2, chatId.id)
-    seq.setObject(3, action)
-    seq.setObject(4, parsedTime)
-    seq.setObject(5, reason)
+    seq.setObject(3, parsedAction.action)
+    seq.setObject(4, parsedAction.restrictTime)
+    seq.setObject(5, parsedAction.reason)
     seq.executeUpdate()
 
     bot.sendMessage(

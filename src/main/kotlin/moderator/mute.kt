@@ -1,5 +1,7 @@
 package moderator
 
+import checkCanDeleteMessages
+import checkCanRestrict
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.ChatPermissions
@@ -15,7 +17,6 @@ fun muteUser(bot: Bot, message: Message, restrictTime: Long?, reason: String?, s
         canSendOtherMessages = false
     )
     val chatId = ChatId.fromId(message.chat.id)
-    val meAsChatMember = bot.getChatMember(chatId, bot.getMe().get().id).get()
     val member = message.from!!
     val notifyText = listOf(
         "Bye-bye!",
@@ -25,15 +26,10 @@ fun muteUser(bot: Bot, message: Message, restrictTime: Long?, reason: String?, s
         if (reason == null) "" else "Reason:\n$reason"
     ).joinToString("\n")
 
-    if (!meAsChatMember.canRestrictMembers!!) {
-        bot.sendMessage(
-            chatId,
-            text = "I have no canRestrictMembers permission!",
-            replyToMessageId = message.messageId
-        )
-        return
-    }
+    if (!checkCanDeleteMessages(bot, message)) return
+    if (!checkCanRestrict(bot, message)) return
 
+    bot.deleteMessage(chatId, message.messageId)
     bot.restrictChatMember(
         chatId,
         member.id,

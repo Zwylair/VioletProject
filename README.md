@@ -11,6 +11,7 @@ A Kotlin-based telegram bot that implements some features that are commonly not 
 - `-stickerpackunban` -- removes the restriction on sending stickers from a specific pack.
 - `-addnote (note_name_without_#) <note text or reply to a media message to save it>` -- adds a #note. If you reply #notename to any message, the bot will delete yours and send the text/media in a reply message
 - `-removenote #(note_name_without_#)` -- deletes #note
+- `-subscribe` -- buy pro subscription
 
 
 ## Running

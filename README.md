@@ -17,7 +17,7 @@ A Kotlin-based telegram bot that implements some features that are commonly not 
 ## Running
 
 ```shell
-gradlew run -Pargs="(BOT_TOKEN) (PAYMENT_TOKEN)"
+gradlew run --args="(BOT_TOKEN) (PAYMENT_TOKEN)"
 ```
 
 ## Building

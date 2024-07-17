@@ -18,8 +18,6 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.46.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("ch.qos.logback:logback-classic:1.5.6")
 }
 
@@ -29,4 +27,14 @@ application {
 
 kotlin {
     jvmToolchain(17)
+}
+
+tasks {
+    jar {
+        manifest {
+            attributes["Main-Class"] = "MainKt"
+        }
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
 }

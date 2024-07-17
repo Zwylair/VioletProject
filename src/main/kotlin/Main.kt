@@ -5,12 +5,12 @@ import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.preCheckoutQuery
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.extensions.filters.Filter
+import com.github.kotlintelegrambot.logging.LogLevel
 import Config.BOT_PREFIX
 import notes.*
 import cardControl.*
 import stickerpackControl.*
 import buyProSubscription.*
-import com.github.kotlintelegrambot.logging.LogLevel
 
 object BotCommand : Filter {
     override fun Message.predicate() = (text ?: "").startsWith(BOT_PREFIX)
@@ -20,13 +20,13 @@ object Payment : Filter {
     override fun Message.predicate() = successfulPayment != null
 }
 
-fun main(vararg botArgs: String) {
+fun main(botArgs: Array<String>) {
     Config.BOT_TOKEN = botArgs[0]
     Config.PAYMENT_TOKEN = botArgs[1]
 
     val bot = bot {
         token = Config.BOT_TOKEN
-        logLevel = LogLevel.Error
+        logLevel = LogLevel.Network.Body
 
         val conn = connect(Config.DB_PATH)
         val statement = conn.createStatement()

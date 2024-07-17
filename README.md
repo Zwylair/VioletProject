@@ -17,5 +17,17 @@ A Kotlin-based telegram bot that implements some features that are commonly not 
 ## Running
 
 ```shell
-gradlew run --args="(BOT_TOKEN) (PAYMENT_TOKEN)"
+gradlew run -Pargs="(BOT_TOKEN) (PAYMENT_TOKEN)"
+```
+
+## Building
+
+```shell
+gradlew clean build
+```
+
+Then copy your freshly made jar file from `build/libs/` (by default `build/libs/VioletProject-[version].jar`). Afterward, run it like this:
+
+```shell
+java -jar VioletProject-[version].jar (BOT_TOKEN) (PAYMENT_TOKEN)
 ```
